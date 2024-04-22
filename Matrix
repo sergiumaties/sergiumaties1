@@ -1,0 +1,66 @@
+#include <iostream>
+using namespace std;
+
+class Matrix {
+private:
+    int rows, cols;
+    int** data;
+
+public:
+    Matrix(int r, int c) : rows(r), cols(c) {
+        data = new int*[rows];
+        for (int i = 0; i < rows; ++i)
+            data[i] = new int[cols];
+    }
+
+    Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) {
+        data = new int*[rows];
+        for (int i = 0; i < rows; ++i) {
+            data[i] = new int[cols];
+            for (int j = 0; j < cols; ++j)
+                data[i][j] = other.data[i][j];
+        }
+    }
+
+    ~Matrix() {
+        for (int i = 0; i < rows; ++i)
+            delete[] data[i];
+        delete[] data;
+    }
+
+    Matrix operator*(const Matrix& other) const {
+        Matrix result(rows, other.cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < other.cols; ++j) {
+                result.data[i][j] = 0;
+                for (int k = 0; k < cols; ++k)
+                    result.data[i][j] += data[i][k] * other.data[k][j];
+            }
+        }
+        return result;
+    }
+
+    friend ostream& operator<<(ostream& out, const Matrix& mat) {
+        for (int i = 0; i < mat.rows; ++i) {
+            for (int j = 0; j < mat.cols; ++j)
+                out << mat.data[i][j] << " ";
+            out << endl;
+        }
+        return out;
+    }
+};
+
+int main() {
+    Matrix A(2, 3);
+    A[0][0] = 1; A[0][1] = 2; A[0][2] = 3;
+    A[1][0] = 4; A[1][1] = 5; A[1][2] = 6;
+
+    Matrix B(3, 2);
+    B[0][0] = 7; B[0][1] = 8;
+    B[1][0] = 9; B[1][1] = 10;
+    B[2][0] = 11; B[2][1] = 12;
+
+    Matrix C = A * B;
+    cout << "Result:\n" << C;
+    return 0;
+}
