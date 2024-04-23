@@ -1,0 +1,21 @@
+import threading
+
+data = [1, 2, 3, 4, 5]
+result = []
+
+def process_data():
+    global data
+    while data:
+        item = data.pop()
+        result.append(item ** 2)
+
+threads = []
+for _ in range(4):
+    t = threading.Thread(target=process_data)
+    t.start()
+    threads.append(t)
+
+for t in threads:
+    t.join()
+
+print(result)
